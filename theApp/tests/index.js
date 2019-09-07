@@ -38,7 +38,23 @@ test('should count games when results are registered', async assert => {
   assert.end()
 })
 
-test('should not allow starting two sessions with the same name', notImplementedYet)
+test('should not allow starting two sessions with the same name', async assert => {
+  before()
+  const sessionName = '2v2'
+
+  await startSession({sessionRepo})(sessionName, noWarmup())
+  try {
+    await startSession({sessionRepo})(sessionName, noWarmup())
+
+    assert.fail('should have thrown error')
+  } catch (error) {
+    assert.ok(error.domain)
+    assert.ok(error.message, 'SESSION_ALREADY_EXISTS')
+  }
+
+  assert.end()
+})
+
 test('should not get session that was not started ', notImplementedYet)
 test('should not allow registering results for session that was not started', notImplementedYet)
 

@@ -14,8 +14,14 @@ class DomainError extends Error {
   }
 }
 
-export const startSession = ({sessionRepo}) => (sessionName, settings) => {
+export const startSession = ({sessionRepo}) => async (sessionName, settings) => {
   const sessionSettings = Object.assign({}, defaultSettings, settings)
+
+  const sessionWithName = await sessionRepo.get(sessionName)
+
+  if (sessionWithName) {
+    throw new DomainError('SESSION_ALREADY_EXISTS')
+  }
 
   const newSession = {
     name: sessionName,
