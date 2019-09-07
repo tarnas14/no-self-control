@@ -44,3 +44,5 @@ test('should count games when results are registered', async assert => {
 
 test('should not allow starting two sessions with the same name', notImplementedYet)
 test('should not get session that was not started ', notImplementedYet)
+test('should not allow registering results for session that was not started', notImplementedYet)
+test('should end session when max consecutive losses was reached', notImplementedYet)
