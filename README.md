@@ -10,7 +10,7 @@ But can be used with any set of exercises that have win/loss condition.
 * based on settings we track HP of current session. adding wins and losses affects HP
 * end of session:
 when HP reaches 0 points
-or reached maximum number of games (not counting warmups)
+or reached maximum number of games
 or maximum number of consecutive losses has been reached
 * after session has ended it cannot be modified
 
