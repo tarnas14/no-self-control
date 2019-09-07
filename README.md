@@ -34,5 +34,7 @@ This will then be used in different actual applications based on different frame
 Hopefully it will
 
 a) work
+
 b) help me lose less MMR on Rocket League ladder
-c) prove that you can make a JS application cleanly (y)
+
+c) prove that you can make a JS application cleanly
