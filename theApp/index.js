@@ -74,8 +74,10 @@ const takeWhile = (predicate, array) => {
   return []
 }
 
-const currentWinStreak = session => takeWhile(({win}) => win, session.games)
-const currentLossStreak = session => takeWhile(({win}) => !win, session.games)
+const currentWinStreak = session =>
+  takeWhile(({win}) => win, session.games.filter(({warmup}) => !warmup))
+const currentLossStreak = session =>
+  takeWhile(({win}) => !win, session.games.filter(({warmup}) => !warmup))
 
 export const registerGameResultFactory = ({sessionRepo}) => async (
   sessionName,
