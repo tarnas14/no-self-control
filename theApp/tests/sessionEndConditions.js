@@ -36,7 +36,7 @@ export default () => {
       assert.fail('should have thrown an error')
     } catch (error) {
       assert.ok(error.domain, 'not domain error')
-      assert.equal(error.message, 'You do not have HP to keep playing.', 'wrong error message')
+      assert.equal(error.message, 'SESSION_ALREADY_ENDED', 'wrong error message')
     }
 
     assert.end()
@@ -58,7 +58,6 @@ export default () => {
 
   test('should not allow registering results in a session that has ended due to max games', async assert => {
     before()
-
     const sessionName = '2v2'
 
     await startSession({sessionRepo})(sessionName, noWarmup({maxGames: 1}))
@@ -70,8 +69,21 @@ export default () => {
       assert.fail('should have thrown an error')
     } catch (error) {
       assert.ok(error.domain, 'not domain error')
-      assert.equal(error.message, 'You do not have HP to keep playing.', 'wrong error message')
+      assert.equal(error.message, 'SESSION_ALREADY_ENDED', 'wrong error message')
     }
+
+    assert.end()
+  })
+
+  test('should end session when max consecutive losses was reached', async assert => {
+    before()
+    const sessionName = '2v2'
+
+    await startSession({sessionRepo})(sessionName, noWarmup({maxConsecutiveLosses: 2, hp: 5}))
+    await registerGameResult({sessionRepo})(sessionName, {win: false})
+    const events = await registerGameResult({sessionRepo})(sessionName, {win: false})
+
+    assertSessionEnded(assert, events)
 
     assert.end()
   })
