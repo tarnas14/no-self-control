@@ -2,10 +2,12 @@
   "name": "theapp",
   "version": "0.0.1",
   "description": "",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
     "test": "babel-node tests/index.js | tap-nyan",
-    "test-watch": "nodemon -x 'yarn t'"
+    "test-watch": "nodemon -x 'yarn t'",
+    "postinstall": "npm run build",
+    "build": "babel index.js -o lib/index.js"
   },
   "author": "tarnas",
   "license": "MIT",
