@@ -1,4 +1,4 @@
-import test from 'tape';
+import test from 'tape'
 
 import {registerGameResult, startSession, getSession} from '../index'
 import {sessionRepo} from './mocks'
@@ -26,10 +26,17 @@ export default () => {
     before()
     const sessionName = '2v2'
 
-    await startSession({sessionRepo})(sessionName, noWarmup({lossesToLoseHP: 2}))
+    await startSession({sessionRepo})(
+      sessionName,
+      noWarmup({lossesToLoseHP: 2}),
+    )
 
     await registerGameResult({sessionRepo})(sessionName, {win: false})
-    assert.equal((await getSession({sessionRepo})(sessionName)).hp, 3, 'should still have 3 hp')
+    assert.equal(
+      (await getSession({sessionRepo})(sessionName)).hp,
+      3,
+      'should still have 3 hp',
+    )
 
     await registerGameResult({sessionRepo})(sessionName, {win: false})
     assert.equal((await getSession({sessionRepo})(sessionName)).hp, 2)
@@ -44,7 +51,11 @@ export default () => {
     await startSession({sessionRepo})(sessionName, noWarmup())
 
     await registerGameResult({sessionRepo})(sessionName, {win: true})
-    assert.equal((await getSession({sessionRepo})(sessionName)).hp, 3, 'should still have 3 hp')
+    assert.equal(
+      (await getSession({sessionRepo})(sessionName)).hp,
+      3,
+      'should still have 3 hp',
+    )
 
     await registerGameResult({sessionRepo})(sessionName, {win: true})
     assert.equal((await getSession({sessionRepo})(sessionName)).hp, 4)

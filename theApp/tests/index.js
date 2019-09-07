@@ -1,8 +1,18 @@
-import test from 'tape';
+import test from 'tape'
 
-import {registerGameResult, startSession, getSession, defaultSettings} from '../index'
+import {
+  registerGameResult,
+  startSession,
+  getSession,
+  defaultSettings,
+} from '../index'
 import {sessionRepo} from './mocks'
-import {notImplementedYet, noWarmup, beforeFactory, assertSessionEnded} from './utils'
+import {
+  notImplementedYet,
+  noWarmup,
+  beforeFactory,
+  assertSessionEnded,
+} from './utils'
 import warmupTests from './warmup'
 import hpCountingTests from './hpCounting'
 import sessionEndConditionsTests from './sessionEndConditions'

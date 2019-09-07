@@ -1,4 +1,4 @@
-import test from 'tape';
+import test from 'tape'
 
 import {registerGameResult, startSession, getSession} from '../index'
 import {sessionRepo} from './mocks'
@@ -13,11 +13,17 @@ export default () => {
 
     await startSession({sessionRepo})(sessionName, noWarmup({hp: 1}))
 
-    const events = await registerGameResult({sessionRepo})(sessionName, {win: false})
+    const events = await registerGameResult({sessionRepo})(sessionName, {
+      win: false,
+    })
 
     assertSessionEnded(assert, events)
 
-    assert.equal((await getSession({sessionRepo})(sessionName)).hp, 0, 'should still have 3 hp')
+    assert.equal(
+      (await getSession({sessionRepo})(sessionName)).hp,
+      0,
+      'should still have 3 hp',
+    )
 
     assert.end()
   })
@@ -36,7 +42,11 @@ export default () => {
       assert.fail('should have thrown an error')
     } catch (error) {
       assert.ok(error.domain, 'not domain error')
-      assert.equal(error.message, 'SESSION_ALREADY_ENDED', 'wrong error message')
+      assert.equal(
+        error.message,
+        'SESSION_ALREADY_ENDED',
+        'wrong error message',
+      )
     }
 
     assert.end()
@@ -47,8 +57,14 @@ export default () => {
     const sessionName = '2v2'
 
     await startSession({sessionRepo})(sessionName, noWarmup({maxGames: 2}))
-    const firstGameEvents = await registerGameResult({sessionRepo})(sessionName, {win: false})
-    const secondGameEvents = await registerGameResult({sessionRepo})(sessionName, {win: false})
+    const firstGameEvents = await registerGameResult({sessionRepo})(
+      sessionName,
+      {win: false},
+    )
+    const secondGameEvents = await registerGameResult({sessionRepo})(
+      sessionName,
+      {win: false},
+    )
 
     assert.equal(firstGameEvents.length, 0)
     assertSessionEnded(assert, secondGameEvents)
@@ -69,7 +85,11 @@ export default () => {
       assert.fail('should have thrown an error')
     } catch (error) {
       assert.ok(error.domain, 'not domain error')
-      assert.equal(error.message, 'SESSION_ALREADY_ENDED', 'wrong error message')
+      assert.equal(
+        error.message,
+        'SESSION_ALREADY_ENDED',
+        'wrong error message',
+      )
     }
 
     assert.end()
@@ -79,9 +99,14 @@ export default () => {
     before()
     const sessionName = '2v2'
 
-    await startSession({sessionRepo})(sessionName, noWarmup({maxConsecutiveLosses: 2, hp: 5}))
+    await startSession({sessionRepo})(
+      sessionName,
+      noWarmup({maxConsecutiveLosses: 2, hp: 5}),
+    )
     await registerGameResult({sessionRepo})(sessionName, {win: false})
-    const events = await registerGameResult({sessionRepo})(sessionName, {win: false})
+    const events = await registerGameResult({sessionRepo})(sessionName, {
+      win: false,
+    })
 
     assertSessionEnded(assert, events)
 

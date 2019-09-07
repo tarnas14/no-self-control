@@ -14,7 +14,10 @@ class DomainError extends Error {
   }
 }
 
-export const startSession = ({sessionRepo}) => async (sessionName, settings) => {
+export const startSession = ({sessionRepo}) => async (
+  sessionName,
+  settings,
+) => {
   const sessionSettings = Object.assign({}, defaultSettings, settings)
 
   const sessionWithName = await sessionRepo.get(sessionName)
@@ -45,15 +48,22 @@ export const startSession = ({sessionRepo}) => async (sessionName, settings) => 
   return sessionRepo.save(newSession)
 }
 
-const sessionEnded = session => session.hp === 0
-  || (session.settings.maxGames && session.gamesCount === session.settings.maxGames)
-  || (session.settings.maxConsecutiveLosses > 0
-    && session.games.length >= session.settings.maxConsecutiveLosses
-    && session.games.slice(0, session.settings.maxConsecutiveLosses).every(({win}) => !win))
+const sessionEnded = session =>
+  session.hp === 0 ||
+  (session.settings.maxGames &&
+    session.gamesCount === session.settings.maxGames) ||
+  (session.settings.maxConsecutiveLosses > 0 &&
+    session.games.length >= session.settings.maxConsecutiveLosses &&
+    session.games
+      .slice(0, session.settings.maxConsecutiveLosses)
+      .every(({win}) => !win))
 
 const warmingUp = session => session.warmups < session.settings.warmupGames
 
-export const registerGameResult = ({sessionRepo}) => async (sessionName, gameInfo) => {
+export const registerGameResult = ({sessionRepo}) => async (
+  sessionName,
+  gameInfo,
+) => {
   const session = await sessionRepo.get(sessionName)
 
   if (!session) {

@@ -1,4 +1,4 @@
-import test from 'tape';
+import test from 'tape'
 
 import {registerGameResult, startSession, getSession} from '../index'
 import {sessionRepo} from './mocks'
@@ -11,19 +11,39 @@ export default () => {
     before()
     const sessionName = '2v2'
 
-    await startSession({sessionRepo})(sessionName, {lossesToLoseHP: 1, winsToGainHP: 1, warmupGames: 2})
+    await startSession({sessionRepo})(sessionName, {
+      lossesToLoseHP: 1,
+      winsToGainHP: 1,
+      warmupGames: 2,
+    })
 
     await registerGameResult({sessionRepo})(sessionName, {win: false})
-    assert.equal((await getSession({sessionRepo})(sessionName)).hp, 3, 'warmup game, should not count loss')
+    assert.equal(
+      (await getSession({sessionRepo})(sessionName)).hp,
+      3,
+      'warmup game, should not count loss',
+    )
 
     await registerGameResult({sessionRepo})(sessionName, {win: true})
-    assert.equal((await getSession({sessionRepo})(sessionName)).hp, 3, 'warmup game, should not count win')
+    assert.equal(
+      (await getSession({sessionRepo})(sessionName)).hp,
+      3,
+      'warmup game, should not count win',
+    )
 
     await registerGameResult({sessionRepo})(sessionName, {win: false})
-    assert.equal((await getSession({sessionRepo})(sessionName)).hp, 2, 'not warmup, should count loss')
+    assert.equal(
+      (await getSession({sessionRepo})(sessionName)).hp,
+      2,
+      'not warmup, should count loss',
+    )
 
     await registerGameResult({sessionRepo})(sessionName, {win: true})
-    assert.equal((await getSession({sessionRepo})(sessionName)).hp, 3, 'not warmup, should count win')
+    assert.equal(
+      (await getSession({sessionRepo})(sessionName)).hp,
+      3,
+      'not warmup, should count win',
+    )
 
     assert.end()
   })
@@ -48,10 +68,15 @@ export default () => {
     before()
     const sessionName = '2v2'
 
-    await startSession({sessionRepo})(sessionName, {maxGames: 2, warmupGames: 2})
+    await startSession({sessionRepo})(sessionName, {
+      maxGames: 2,
+      warmupGames: 2,
+    })
 
     await registerGameResult({sessionRepo})(sessionName, {win: false})
-    const events = await registerGameResult({sessionRepo})(sessionName, {win: true})
+    const events = await registerGameResult({sessionRepo})(sessionName, {
+      win: true,
+    })
 
     assertSessionEnded(assert, events)
 

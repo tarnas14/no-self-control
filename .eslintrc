@@ -1,0 +1,22 @@
+{
+  "extends": [
+    "prettier"
+  ],
+  "parserOptions": {
+      "sourceType": "module",
+      "ecmaVersion": 8
+  },
+  "plugins": [
+    "prettier"
+  ],
+  "rules": {
+    "no-use-before-define": [2, { "functions": false }],
+    "no-underscore-dangle": 0,
+    "prettier/prettier": ["error", {
+      "semi": false,
+      "singleQuote": true,
+      "trailingComma": "all",
+      "bracketSpacing": false
+    }]
+  }
+}
