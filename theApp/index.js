@@ -60,6 +60,23 @@ const sessionEnded = session =>
 
 const warmingUp = session => session.warmups < session.settings.warmupGames
 
+const takeWhile = (predicate, array) => {
+  const [head, ...tail] = array
+
+  if (array.length === 0) {
+    return []
+  }
+
+  if (predicate(head)) {
+    return [head, ...takeWhile(predicate, tail)]
+  }
+
+  return []
+}
+
+const currentWinStreak = session => takeWhile(({win}) => win, session.games)
+const currentLossStreak = session => takeWhile(({win}) => !win, session.games)
+
 export const registerGameResultFactory = ({sessionRepo}) => async (
   sessionName,
   gameInfo,
@@ -94,12 +111,20 @@ export const registerGameResultFactory = ({sessionRepo}) => async (
   }
 
   if (!game.warmup) {
-    if (game.win && session.wins % settings.winsToGainHP === 0) {
-      session.hp += 1
+    if (game.win) {
+      const winStreak = currentWinStreak(session)
+
+      if (winStreak.length % settings.winsToGainHP === 0) {
+        session.hp += 1
+      }
     }
 
-    if (!game.win && session.losses % settings.lossesToLoseHP === 0) {
-      session.hp -= 1
+    if (!game.win) {
+      const lossStreak = currentLossStreak(session)
+
+      if (lossStreak.length % settings.lossesToLoseHP === 0) {
+        session.hp -= 1
+      }
     }
   }
 

@@ -49,7 +49,7 @@ export default () => {
     assert.end()
   })
 
-  test('should gain 1HP after 2 wins', async assert => {
+  test('should gain 1HP after 2 consecutive wins', async assert => {
     before()
     const sessionName = '2v2'
 
@@ -64,6 +64,26 @@ export default () => {
 
     await registerGameResult(sessionName, {win: true})
     assert.equal((await getSession(sessionName)).hp, 4)
+
+    assert.end()
+  })
+
+  test('should not gain 1HP after 2 wins with loss in between', async assert => {
+    before()
+    const sessionName = '2v2'
+
+    await startSession(sessionName, noWarmup())
+
+    await registerGameResult(sessionName, {win: true})
+    assert.equal(
+      (await getSession(sessionName)).hp,
+      3,
+      'should still have 3 hp',
+    )
+
+    await registerGameResult(sessionName, {win: false})
+    await registerGameResult(sessionName, {win: true})
+    assert.equal((await getSession(sessionName)).hp, 2, 'should have lost 1 hp')
 
     assert.end()
   })
