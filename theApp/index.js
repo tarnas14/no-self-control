@@ -85,6 +85,14 @@ export const registerGameResultFactory = ({sessionRepo}) => async (
 
   session.games = [game, ...session.games]
 
+  if (game.warmup && !warmingUp(session)) {
+    events.push({type: 'WARMUP_FINISHED'})
+  }
+
+  if (game.warmup && warmingUp(session)) {
+    events.push({type: 'WARMUP'})
+  }
+
   if (!game.warmup) {
     if (game.win && session.wins % settings.winsToGainHP === 0) {
       session.hp += 1

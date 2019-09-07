@@ -78,7 +78,7 @@ export default () => {
 
     await startSession(sessionName, {
       maxGames: 2,
-      warmupGames: 2,
+      warmupGames: 1,
     })
 
     await registerGameResult(sessionName, {win: false})
@@ -87,6 +87,37 @@ export default () => {
     })
 
     assertSessionEnded(assert, events)
+
+    assert.end()
+  })
+
+  test('should inform a game was a warmup via event', async assert => {
+    before()
+    const sessionName = '2v2'
+
+    await startSession(sessionName, {
+      warmupGames: 2,
+    })
+
+    const events = await registerGameResult(sessionName, {win: false})
+    assert.equal(events.length, 1)
+    assert.equal(events[0].type, 'WARMUP')
+
+    assert.end()
+  })
+
+  test('should inform about warmup games being finished via event', async assert => {
+    before()
+    const sessionName = '2v2'
+
+    await startSession(sessionName, {
+      warmupGames: 2,
+    })
+
+    await registerGameResult(sessionName, {win: false})
+    const events = await registerGameResult(sessionName, {win: false})
+    assert.equal(events.length, 1)
+    assert.equal(events[0].type, 'WARMUP_FINISHED')
 
     assert.end()
   })
