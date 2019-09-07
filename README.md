@@ -9,9 +9,9 @@ But can be used with any set of exercises that have win/loss condition.
 
 * based on settings we track HP of current session. adding wins and losses affects HP
 * end of session:
-when HP reaches 0 points
-or reached maximum number of games
-or maximum number of consecutive losses has been reached
+  - when HP reaches 0 points
+  - **or** reached maximum number of games
+  - **or** maximum number of consecutive losses has been reached
 * after session has ended it cannot be modified
 
 settings are defined as follows:
@@ -33,8 +33,6 @@ The app logic is going to be written in pure JS, well tested and stuff.
 This will then be used in different actual applications based on different frameworks, with different interfaces.
 Hopefully it will
 
-a) work
-
-b) help me lose less MMR on Rocket League ladder
-
-c) prove that you can make a JS application cleanly
+1. work
+2. help me lose less MMR on Rocket League ladder
+3. prove that you can make a JS application cleanly
