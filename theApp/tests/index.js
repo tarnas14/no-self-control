@@ -1,9 +1,9 @@
 import test from 'tape'
 
 import {
-  registerGameResult,
-  startSession,
-  getSession,
+  registerGameResultFactory,
+  startSessionFactory,
+  getSessionFactory,
   defaultSettings,
 } from '../index'
 import {sessionRepo} from './mocks'
@@ -19,12 +19,16 @@ import sessionEndConditionsTests from './sessionEndConditions'
 
 const before = beforeFactory(sessionRepo)
 
+const startSession = startSessionFactory({sessionRepo})
+const registerGameResult = registerGameResultFactory({sessionRepo})
+const getSession = getSessionFactory({sessionRepo})
+
 test('should start session with default HP and 0 games', async assert => {
   before()
   const sessionName = '2v2'
 
-  await startSession({sessionRepo})(sessionName, noWarmup())
-  const session = await getSession({sessionRepo})(sessionName)
+  await startSession(sessionName, noWarmup())
+  const session = await getSession(sessionName)
 
   assert.equal(session.hp, defaultSettings.hp)
   assert.equal(session.gamesCount, 0)
@@ -36,12 +40,12 @@ test('should count games when results are registered', async assert => {
   before()
   const sessionName = '2v2'
 
-  await startSession({sessionRepo})(sessionName, noWarmup())
+  await startSession(sessionName, noWarmup())
 
-  await registerGameResult({sessionRepo})(sessionName, {win: true})
-  await registerGameResult({sessionRepo})(sessionName, {win: false})
+  await registerGameResult(sessionName, {win: true})
+  await registerGameResult(sessionName, {win: false})
 
-  const session = await getSession({sessionRepo})(sessionName)
+  const session = await getSession(sessionName)
 
   assert.equal(session.gamesCount, 2)
 
@@ -52,9 +56,9 @@ test('should not allow starting two sessions with the same name', async assert =
   before()
   const sessionName = '2v2'
 
-  await startSession({sessionRepo})(sessionName, noWarmup())
+  await startSession(sessionName, noWarmup())
   try {
-    await startSession({sessionRepo})(sessionName, noWarmup())
+    await startSession(sessionName, noWarmup())
 
     assert.fail('should have thrown error')
   } catch (error) {
@@ -70,7 +74,7 @@ test('should not get session that was not started ', async assert => {
   const sessionName = '2v2'
 
   try {
-    await getSession({sessionRepo})(sessionName)
+    await getSession(sessionName)
 
     assert.fail('should have thrown error')
   } catch (error) {
@@ -86,7 +90,7 @@ test('should not allow registering results for session that does not exist', asy
   const sessionName = '2v2'
 
   try {
-    await registerGameResult({sessionRepo})(sessionName, {win: false})
+    await registerGameResult(sessionName, {win: false})
 
     assert.fail('should have thrown error')
   } catch (error) {

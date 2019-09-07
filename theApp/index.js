@@ -14,7 +14,7 @@ class DomainError extends Error {
   }
 }
 
-export const startSession = ({sessionRepo}) => async (
+export const startSessionFactory = ({sessionRepo}) => async (
   sessionName,
   settings,
 ) => {
@@ -60,7 +60,7 @@ const sessionEnded = session =>
 
 const warmingUp = session => session.warmups < session.settings.warmupGames
 
-export const registerGameResult = ({sessionRepo}) => async (
+export const registerGameResultFactory = ({sessionRepo}) => async (
   sessionName,
   gameInfo,
 ) => {
@@ -104,7 +104,7 @@ export const registerGameResult = ({sessionRepo}) => async (
   return events
 }
 
-export const getSession = ({sessionRepo}) => async sessionName => {
+export const getSessionFactory = ({sessionRepo}) => async sessionName => {
   const session = sessionRepo.get(sessionName)
 
   if (!session) {
