@@ -55,6 +55,11 @@ const warmingUp = session => session.warmups < session.settings.warmupGames
 
 export const registerGameResult = ({sessionRepo}) => async (sessionName, gameInfo) => {
   const session = await sessionRepo.get(sessionName)
+
+  if (!session) {
+    throw new DomainError('SESSION_DOES_NOT_EXIST')
+  }
+
   const game = Object.assign({}, gameInfo)
 
   if (sessionEnded(session)) {
@@ -89,4 +94,12 @@ export const registerGameResult = ({sessionRepo}) => async (sessionName, gameInf
   return events
 }
 
-export const getSession = ({sessionRepo}) => sessionName => sessionRepo.get(sessionName)
+export const getSession = ({sessionRepo}) => async sessionName => {
+  const session = sessionRepo.get(sessionName)
+
+  if (!session) {
+    throw new DomainError('SESSION_DOES_NOT_EXIST')
+  }
+
+  return session
+}
