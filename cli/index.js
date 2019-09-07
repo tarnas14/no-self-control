@@ -25,6 +25,12 @@ const handle = events => {
       case 'END_OF_SESSION':
         cli.log('WHOOPS! this is the end of session, I am afraid, move on')
         break
+      case 'WARMUP':
+        cli.log('good warmup game, man')
+        break
+      case 'WARMUP_FINISHED':
+        cli.log('ok, I hope you feel warm cause warmup is finished')
+        break
     }
   })
 }
