@@ -2,6 +2,8 @@ export const defaultSettings = {
   hp: 3,
   lossesToLoseHP: 1,
   winsToGainHP: 2,
+  warmupGames: 1,
+  maxGames: 0,
 }
 
 class DomainError extends Error {
@@ -17,18 +19,21 @@ export const startSession = ({sessionRepo}) => (sessionName, settings) => {
   const newSession = {
     name: sessionName,
     hp: sessionSettings.hp,
+    warmups: 0,
+    wins: 0,
+    losses: 0,
     get gamesCount() {
       return this.wins + this.losses
     },
-    wins: 0,
-    losses: 0,
     settings: sessionSettings,
   }
 
   return sessionRepo.save(newSession)
 }
 
-const sessionEnded = session => session.hp === 0 || session.gamesCount === session.settings.maxGames
+const sessionEnded = session => session.hp === 0 || (session.settings.maxGames && session.gamesCount === session.settings.maxGames)
+
+const warmingUp = session => session.warmups < session.settings.warmupGames
 
 export const registerGameResult = ({sessionRepo}) => async (sessionName, gameInfo) => {
   const session = await sessionRepo.get(sessionName)
@@ -43,13 +48,17 @@ export const registerGameResult = ({sessionRepo}) => async (sessionName, gameInf
   if (gameInfo.win) {
     session.wins += 1
 
-    if (session.wins % settings.winsToGainHP === 0) {
+    if (warmingUp(session)) {
+      session.warmups += 1
+    } else if (session.wins % settings.winsToGainHP === 0) {
       session.hp += 1
     }
   } else {
     session.losses += 1
 
-    if (session.losses % settings.lossesToLoseHP === 0) {
+    if (warmingUp(session)) {
+      session.warmups += 1
+    } else if (session.losses % settings.lossesToLoseHP === 0) {
       session.hp -= 1
     }
   }
