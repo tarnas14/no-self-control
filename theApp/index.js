@@ -17,7 +17,7 @@ export const startSession = ({sessionRepo}) => (sessionName, settings) => {
   const newSession = {
     name: sessionName,
     hp: sessionSettings.hp,
-    get gameCount() {
+    get gamesCount() {
       return this.wins + this.losses
     },
     wins: 0,
@@ -28,10 +28,12 @@ export const startSession = ({sessionRepo}) => (sessionName, settings) => {
   return sessionRepo.save(newSession)
 }
 
+const sessionEnded = session => session.hp === 0 || session.gamesCount === session.settings.maxGames
+
 export const registerGameResult = ({sessionRepo}) => async (sessionName, gameInfo) => {
   const session = await sessionRepo.get(sessionName)
 
-  if (session.hp === 0) {
+  if (sessionEnded(session)) {
     throw new DomainError('You do not have HP to keep playing.')
   }
 
@@ -52,7 +54,7 @@ export const registerGameResult = ({sessionRepo}) => async (sessionName, gameInf
     }
   }
 
-  if (session.hp === 0) {
+  if (sessionEnded(session)) {
     events.push({type: 'END_OF_SESSION'})
   }
 

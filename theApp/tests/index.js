@@ -19,7 +19,7 @@ test('should start session with default HP and 0 games', async assert => {
   const session = await getSession({sessionRepo})(sessionName)
 
   assert.equal(session.hp, defaultSettings.hp)
-  assert.equal(session.gameCount, 0)
+  assert.equal(session.gamesCount, 0)
 
   assert.end()
 })
@@ -35,7 +35,7 @@ test('should count games when results are registered', async assert => {
 
   const session = await getSession({sessionRepo})(sessionName)
 
-  assert.equal(session.gameCount, 2)
+  assert.equal(session.gamesCount, 2)
 
   assert.end()
 })
@@ -85,7 +85,7 @@ test('should gain 1HP after 2 wins', async assert => {
   assert.end()
 })
 
-test('should return END_OF_SESSION event after HP reaches 0', async assert => {
+test('should end session when HP reaches 0', async assert => {
   before()
   const sessionName = '2v2'
 
@@ -101,12 +101,47 @@ test('should return END_OF_SESSION event after HP reaches 0', async assert => {
   assert.end()
 })
 
-test('should not allow registering results in a session that has ended', async assert => {
+test('should not allow registering results in a session that has ended due to HP reaching 0', async assert => {
   before()
 
   const sessionName = '2v2'
 
   await startSession({sessionRepo})(sessionName, {hp: 1})
+  await registerGameResult({sessionRepo})(sessionName, {win: false})
+
+  try {
+    await registerGameResult({sessionRepo})(sessionName, {win: true})
+
+    assert.fail('should have thrown an error')
+  } catch (error) {
+    assert.ok(error.domain, 'not domain error')
+    assert.equal(error.message, 'You do not have HP to keep playing.', 'wrong error message')
+  }
+
+  assert.end()
+})
+
+test('should end session when max number of games is reached', async assert => {
+  before()
+  const sessionName = '2v2'
+
+  await startSession({sessionRepo})(sessionName, {maxGames: 2})
+  const firstGameEvents = await registerGameResult({sessionRepo})(sessionName, {win: false})
+  const secondGameEvents = await registerGameResult({sessionRepo})(sessionName, {win: false})
+
+  assert.equal(firstGameEvents.length, 0)
+  assert.equal(secondGameEvents.length, 1)
+  assert.equal(secondGameEvents[0].type, 'END_OF_SESSION')
+
+  assert.end()
+})
+
+test('should not allow registering results in a session that has ended due to max games', async assert => {
+  before()
+
+  const sessionName = '2v2'
+
+  await startSession({sessionRepo})(sessionName, {maxGames: 1})
   await registerGameResult({sessionRepo})(sessionName, {win: false})
 
   try {
