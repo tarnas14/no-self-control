@@ -14,6 +14,18 @@ class DomainError extends Error {
   }
 }
 
+export const ERRORS = {
+  SESSION_ALREADY_EXISTS: 'SESSION_ALREADY_EXISTS',
+  SESSION_DOES_NOT_EXIST: 'SESSION_DOES_NOT_EXIST',
+  SESSION_ALREADY_ENDED: 'SESSION_ALREADY_ENDED',
+}
+
+export const EVENTS = {
+  WARMUP_FINISHED: 'WARMUP_FINISHED',
+  WARMUP: 'WARMUP',
+  END_OF_SESSION: 'END_OF_SESSION',
+}
+
 export const startSessionFactory = ({sessionRepo}) => async (
   sessionName,
   settings,
@@ -23,7 +35,7 @@ export const startSessionFactory = ({sessionRepo}) => async (
   const sessionWithName = await sessionRepo.get(sessionName)
 
   if (sessionWithName) {
-    throw new DomainError('SESSION_ALREADY_EXISTS')
+    throw new DomainError(ERRORS.SESSION_ALREADY_EXISTS)
   }
 
   const newSession = {
@@ -86,13 +98,13 @@ export const registerGameResultFactory = ({sessionRepo}) => async (
   const session = await sessionRepo.get(sessionName)
 
   if (!session) {
-    throw new DomainError('SESSION_DOES_NOT_EXIST')
+    throw new DomainError(ERRORS.SESSION_DOES_NOT_EXIST)
   }
 
   const game = Object.assign({}, gameInfo)
 
   if (sessionEnded(session)) {
-    throw new DomainError('SESSION_ALREADY_ENDED')
+    throw new DomainError(ERRORS.SESSION_ALREADY_ENDED)
   }
 
   const {settings} = session
@@ -105,11 +117,11 @@ export const registerGameResultFactory = ({sessionRepo}) => async (
   session.games = [game, ...session.games]
 
   if (game.warmup && !warmingUp(session)) {
-    events.push({type: 'WARMUP_FINISHED'})
+    events.push({type: EVENTS.WARMUP_FINISHED})
   }
 
   if (game.warmup && warmingUp(session)) {
-    events.push({type: 'WARMUP'})
+    events.push({type: EVENTS.WARMUP})
   }
 
   if (!game.warmup) {
@@ -131,7 +143,7 @@ export const registerGameResultFactory = ({sessionRepo}) => async (
   }
 
   if (sessionEnded(session)) {
-    events.push({type: 'END_OF_SESSION'})
+    events.push({type: EVENTS.END_OF_SESSION})
   }
 
   await sessionRepo.save(session)
@@ -143,7 +155,7 @@ export const getSessionFactory = ({sessionRepo}) => async sessionName => {
   const session = sessionRepo.get(sessionName)
 
   if (!session) {
-    throw new DomainError('SESSION_DOES_NOT_EXIST')
+    throw new DomainError(ERRORS.SESSION_DOES_NOT_EXIST)
   }
 
   return session
