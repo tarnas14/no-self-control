@@ -34,20 +34,70 @@
   .Session {
     grid-column: span 2;
     grid-row: span 3;
+
+    background-color: #88D9E6;
+    border-radius: 3px;
+    text-align: center;
+    color: #424874;
+  }
+
+  .Session.finished {
+    opacity: .5;
+  }
+
+  p {
+    font-size: 1.3em;
+  }
+
+  em {
+    display: block;
+    margin-bottom: 1em;
+  }
+
+  h3 + hr {
+    width: 75%;
+    border-color: #424874;
+    border-bottom: 0;
+  }
+
+  button {
+    border: 0;
+    font-weight: bold;
+    padding: .5em 1em;
+    letter-spacing: 2px;
+    width: 25%;
+  }
+
+  .win {
+    background-color: #2EC4B6;
+    color: #CCFF66;
+  }
+
+  .loss {
+    background-color: #FF6666;
+    color: white;
+  }
+
+  .hp {
+    font-weight: bold;
+    font-size: 1.4rem;
   }
 </style>
 
-<div class="Session">
-  <p>{session.name}</p>
-  <p>HP: {session.hp}</p>
-  <p>games: {session.gamesCount}</p>
-  {#if warmingUp}
-    <p>relax, this is still warmup</p>
-  {:else if !finished}
-    <p>THE GAME IS AFOOT</p>
-  {:else if finished}
-    <p>you're done, mate</p>
-  {/if}
-  <button disabled={finished} on:click={win}>WIN</button>
-  <button disabled={finished} on:click={loss}>LOSS</button>
+<div class="Session {finished ? 'finished' : ''}">
+  <h3>{session.name}</h3>
+  <hr />
+  <p>HP: <span class="hp">{session.hp}</span></p>
+  <p>games: {session.gamesCount}{finished ? ` (${session.wins}/${session.losses})` : ''}</p>
+  <em>
+    {#if warmingUp}
+      relax, this is still warmup
+    {:else if !finished}
+      THE GAME IS AFOOT
+    {:else if finished}
+      you're done, mate
+    {/if}
+  </em>
+  <button class="win" disabled={finished} on:click={win}>WIN</button>
+  <button class="loss" disabled={finished} on:click={loss}>LOSS</button>
 </div>
