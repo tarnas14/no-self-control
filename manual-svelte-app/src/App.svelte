@@ -40,7 +40,6 @@
   function clearError() {
     form.error = ''
   }
-
 </script>
 
 <style>

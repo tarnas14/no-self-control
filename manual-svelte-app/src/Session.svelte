@@ -1,6 +1,9 @@
 <script>
+  import SettingsTooltip from './SettingsTooltip.svelte'
+
   export let session
   export let registerGameResult
+
   let warmingUp = session.settings.warmupGames > 0
   let finished = false
 
@@ -39,6 +42,14 @@
     border-radius: 3px;
     text-align: center;
     color: #424874;
+    position: relative;
+  }
+
+  .settings-tooltip-container {
+    z-index: 9001;
+    position: absolute;
+    right: 20px;
+    top: 20px;
   }
 
   .Session.finished {
@@ -86,6 +97,9 @@
 </style>
 
 <div class="Session {finished ? 'finished' : ''}">
+  <div class="settings-tooltip-container">
+    <SettingsTooltip settings={session.settings}/>
+  </div>
   <h3>{session.name}</h3>
   <hr />
   <p>HP: <span class="hp">{session.hp}</span></p>
