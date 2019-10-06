@@ -12,8 +12,9 @@
     "svelte": "^3.0.0"
   },
   "dependencies": {
+    "no-self-control": "../theApp",
     "sirv-cli": "^0.4.4",
-    "no-self-control": "../theApp"
+    "svelte-icons": "^1.1.0"
   },
   "scripts": {
     "build": "rollup -c",

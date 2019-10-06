@@ -1,7 +1,7 @@
 <script>
   export let session
   export let registerGameResult
-  let warmingUp = true
+  let warmingUp = session.settings.warmupGames > 0
   let finished = false
 
   function handle(events) {
@@ -66,6 +66,7 @@
     padding: .5em 1em;
     letter-spacing: 2px;
     width: 25%;
+    cursor: pointer;
   }
 
   .win {

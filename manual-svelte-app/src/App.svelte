@@ -1,6 +1,10 @@
 <script>
-  import {ERRORS, startSessionFactory, getSessionFactory, registerGameResultFactory} from 'no-self-control'
+  import {ERRORS, defaultSettings, startSessionFactory, getSessionFactory, registerGameResultFactory} from 'no-self-control'
+
   import Session from './Session.svelte'
+  import Settings from './Settings.svelte'
+
+  const settings = {...defaultSettings}
 
   const TRANSLATE = {
     [ERRORS.SESSION_ALREADY_EXISTS]: 'Session with this name already exists, mate',
@@ -26,7 +30,7 @@
 
   async function handleSessionStart() {
     try {
-      await startSession(form.name)
+      await startSession(form.name, settings)
       form = {name: '', error: ''}
     } catch (error) {
       form.error = TRANSLATE[error.message]
@@ -55,16 +59,17 @@
     margin: 20px auto;
   }
 
-  #sessionName {
-    width: 100%;
-  }
-
   .session-starter {
     grid-row: 1 / 2;
     grid-column: 2 / -2;
 
     display: flex;
     justify-content: center;
+  }
+
+  #sessionName {
+    flex-grow: 8;
+    margin-bottom: 0;
   }
 
   .validation-errors {
@@ -86,6 +91,7 @@
       bind:value={form.name}
       on:input={clearError}
       />
+    <Settings {settings} />
   </form>
   <div class="validation-errors">
     {form.error}
