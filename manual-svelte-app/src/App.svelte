@@ -21,10 +21,23 @@
     save: session => {
       repo = {...repo, [session.name]: session}
     },
-    get: sessionName => repo[sessionName]
+    get: sessionName => repo[sessionName],
+    remove: sessionName => {
+      const newRepo = {...repo}
+      delete newRepo[sessionName]
+      repo = newRepo
+    }
   }
 
   const startSession = startSessionFactory({sessionRepo: svelteRepo})
+  const removeSession = sessionName => {
+    const accepted = window.confirm(`Are you sure you want to remove ${sessionName}`)
+    if (!accepted) {
+      return
+    }
+
+    svelteRepo.remove(sessionName)
+  }
   const getSession = getSessionFactory({sessionRepo: svelteRepo})
   const registerGameResult = (sessionName, gameResult) => registerGameResultFactory({sessionRepo: svelteRepo})(sessionName, gameResult)
 
@@ -77,6 +90,10 @@
     text-align: center;
     color: red;
   }
+
+  button {
+    margin: 0;
+  }
 </style>
 
 <div class="App">
@@ -90,6 +107,7 @@
       bind:value={form.name}
       on:input={clearError}
       />
+    <button type="submit">start</button>
     <Settings {settings} />
   </form>
   <div class="validation-errors">
@@ -97,6 +115,10 @@
   </div>
 
   {#each sessions as session (session)}
-    <Session session={repo[session]} registerGameResult={gameResult => registerGameResult(session, gameResult)}/>
+    <Session
+      remove={() => removeSession(session)}
+      registerGameResult={gameResult => registerGameResult(session, gameResult)}
+      session={repo[session]}
+    />
   {/each}
 </div>

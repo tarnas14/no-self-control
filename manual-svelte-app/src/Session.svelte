@@ -1,8 +1,10 @@
 <script>
   import SettingsTooltip from './SettingsTooltip.svelte'
+  import MdDelete from 'svelte-icons/md/MdDelete.svelte'
 
   export let session
   export let registerGameResult
+  export let remove
 
   let warmingUp = session.settings.warmupGames > 0
   let finished = false
@@ -45,11 +47,17 @@
     position: relative;
   }
 
-  .settings-tooltip-container {
+  .icons-container {
     z-index: 9001;
     position: absolute;
     right: 20px;
     top: 20px;
+    display: flex;
+  }
+
+  .icons-container em {
+    cursor: pointer;
+    width: 30px;
   }
 
   .Session.finished {
@@ -60,7 +68,7 @@
     font-size: 1.3em;
   }
 
-  em {
+  .cheer-message {
     display: block;
     margin-bottom: 1em;
   }
@@ -97,14 +105,17 @@
 </style>
 
 <div class="Session {finished ? 'finished' : ''}">
-  <div class="settings-tooltip-container">
+  <div class="icons-container">
     <SettingsTooltip settings={session.settings}/>
+    <em class="icon gear" on:click={remove}>
+      <MdDelete />
+    </em>
   </div>
   <h3>{session.name}</h3>
   <hr />
   <p>HP: <span class="hp">{session.hp}</span></p>
   <p>games: {session.gamesCount}{finished ? ` (${session.wins}/${session.losses})` : ''}</p>
-  <em>
+  <em class="cheer-message">
     {#if warmingUp}
       relax, this is still warmup
     {:else if !finished}

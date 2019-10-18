@@ -62,8 +62,6 @@
   }
 </style>
 
-<div bind:this={tooltipAnchor}>
-  <em class="gear">
-    <MdSettings />
-  </em>
-</div>
+<em class="gear" bind:this={tooltipAnchor}>
+  <MdSettings />
+</em>
